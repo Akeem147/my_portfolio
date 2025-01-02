@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn";
 
 export const BackgroundGradientAnimation = ({
@@ -9,12 +9,13 @@ export const BackgroundGradientAnimation = ({
   thirdColor = "100, 220, 255",
   fourthColor = "200, 50, 50",
   fifthColor = "180, 180, 50",
+  interactive = true,
   pointerColor = "140, 100, 255",
   size = "80%",
   blendingValue = "hard-light",
   children,
   className,
-  
+
   containerClassName,
 }: {
   gradientBackgroundStart?: string;
@@ -29,7 +30,7 @@ export const BackgroundGradientAnimation = ({
   blendingValue?: string;
   children?: React.ReactNode;
   className?: string;
-  interactive?: boolean;
+  interactive?: boolean; // Add the interactive prop to control interaction
   containerClassName?: string;
 }) => {
   const interactiveRef = useRef<HTMLDivElement>(null);
@@ -44,11 +45,17 @@ export const BackgroundGradientAnimation = ({
     setIsClient(true); // Set client flag after component mount
   }, []);
 
-  useEffect(() => {
-    if (isClient && typeof window !== 'undefined') {
-      // Access document only after component is mounted and client-side
-      document.body.style.setProperty("--gradient-background-start", gradientBackgroundStart);
-      document.body.style.setProperty("--gradient-background-end", gradientBackgroundEnd);
+  // Use useLayoutEffect to ensure DOM manipulation happens only client-side
+  useLayoutEffect(() => {
+    if (isClient && typeof window !== "undefined") {
+      document.body.style.setProperty(
+        "--gradient-background-start",
+        gradientBackgroundStart
+      );
+      document.body.style.setProperty(
+        "--gradient-background-end",
+        gradientBackgroundEnd
+      );
       document.body.style.setProperty("--first-color", firstColor);
       document.body.style.setProperty("--second-color", secondColor);
       document.body.style.setProperty("--third-color", thirdColor);
@@ -79,7 +86,9 @@ export const BackgroundGradientAnimation = ({
       }
       setCurX(curX + (tgX - curX) / 20);
       setCurY(curY + (tgY - curY) / 20);
-      interactiveRef.current.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
+      interactiveRef.current.style.transform = `translate(${Math.round(
+        curX
+      )}px, ${Math.round(curY)}px)`;
     }
 
     move();
@@ -131,15 +140,17 @@ export const BackgroundGradientAnimation = ({
         )}
       >
         {/* Render gradient effects here */}
-        <div
-          ref={interactiveRef}
-          onMouseMove={handleMouseMove}
-          className={cn(
-            `absolute [background:radial-gradient(circle_at_center,_rgba(var(--pointer-color),_0.8)_0,_rgba(var(--pointer-color),_0)_50%)_no-repeat]`,
-            `[mix-blend-mode:var(--blending-value)] w-full h-full -top-1/2 -left-1/2`,
-            `opacity-70`
-          )}
-        ></div>
+        {interactive && (
+          <div
+            ref={interactiveRef}
+            onMouseMove={handleMouseMove}
+            className={cn(
+              `absolute [background:radial-gradient(circle_at_center,_rgba(var(--pointer-color),_0.8)_0,_rgba(var(--pointer-color),_0)_50%)_no-repeat]`,
+              `[mix-blend-mode:var(--blending-value)] w-full h-full -top-1/2 -left-1/2`,
+              `opacity-70`
+            )}
+          ></div>
+        )}
       </div>
     </div>
   );
