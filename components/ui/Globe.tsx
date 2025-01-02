@@ -17,6 +17,24 @@ extend({ ThreeGlobe });
 const RING_PROPAGATION_SPEED = 3;
 const aspect = 1.2;
 
+interface Arc {
+  color: string;
+  arcAlt: number;
+  order: number;
+  startLat: number;
+  startLng: number;
+  endLat: number;
+  endLng: number;
+}
+
+interface Point {
+  color: string;
+  size: number;
+  order: number;
+  lat: number;
+  lng: number;
+}
+
 type Position = {
   order: number;
   startLat: number;
@@ -91,6 +109,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
     ...globeConfig,
   };
 
+
   // Memoize the startAnimation function
   const startAnimation = useCallback(() => {
     if (!globeRef.current || !globeData) return;
@@ -101,28 +120,31 @@ export function Globe({ globeConfig, data }: WorldProps) {
       .arcStartLng((d) => (d as { startLng: number }).startLng * 1)
       .arcEndLat((d) => (d as { endLat: number }).endLat * 1)
       .arcEndLng((d) => (d as { endLng: number }).endLng * 1)
-      .arcColor((e: any) => (e as { color: string }).color)
-      .arcAltitude((e: any) => {
+      .arcColor((e:unknown ) => (e as { color: string }).color)
+      .arcAltitude((e:unknown) => {
         return (e as { arcAlt: number }).arcAlt * 1;
       })
-      .arcStroke((e: any) => {
+      .arcStroke(() => {
         return [0.32, 0.28, 0.3][Math.round(Math.random() * 2)];
       })
       .arcDashLength(defaultProps.arcLength)
-      .arcDashInitialGap((e: any) => (e as { order: number }).order * 1)
+      .arcDashInitialGap((e:unknown) => (e as { order: number }).order * 1)
       .arcDashGap(15)
       .arcDashAnimateTime(() => defaultProps.arcTime);
 
     globeRef.current
       .pointsData(data)
-      .pointColor((e: any) => (e as { color: string }).color) // Keep 'e' here
+      .pointColor((e:unknown) => (e as { color: string }).color) 
       .pointsMerge(true)
       .pointAltitude(0.0)
       .pointRadius(2);
 
     globeRef.current
       .ringsData([])
-      .ringColor((e: any) => (t: any) => e.color(t)) // Keep 'e' here
+      .ringColor((e: unknown) => (t: unknown) => (e as { color: (t: number) => string }).color(t as number))
+    
+
+      
       .ringMaxRadius(defaultProps.maxRings)
       .ringPropagationSpeed(RING_PROPAGATION_SPEED)
       .ringRepeatPeriod(
