@@ -101,7 +101,7 @@ export function Globe({ globeConfig, data }: WorldProps) {
       .arcStartLng((d) => (d as { startLng: number }).startLng * 1)
       .arcEndLat((d) => (d as { endLat: number }).endLat * 1)
       .arcEndLng((d) => (d as { endLng: number }).endLng * 1)
-      .arcColor((e: any) => (e as { color: string }).color) // Keep 'e' here
+      .arcColor((e: any) => (e as { color: string }).color)
       .arcAltitude((e: any) => {
         return (e as { arcAlt: number }).arcAlt * 1;
       })
@@ -130,62 +130,67 @@ export function Globe({ globeConfig, data }: WorldProps) {
       );
   }, [data, defaultProps, globeData]);
 
-  const _buildMaterial = () => {
-    if (!globeRef.current) return;
+ 
 
-    const globeMaterial = globeRef.current.globeMaterial() as unknown as {
-      color: Color;
-      emissive: Color;
-      emissiveIntensity: number;
-      shininess: number;
-    };
-    globeMaterial.color = new Color(globeConfig.globeColor);
-    globeMaterial.emissive = new Color(globeConfig.emissive);
-    globeMaterial.emissiveIntensity = globeConfig.emissiveIntensity || 0.1;
-    globeMaterial.shininess = globeConfig.shininess || 0.9;
-  };
-
-  const _buildData = () => {
-    const arcs = data;
-    const points = [];
-    for (let i = 0; i < arcs.length; i++) {
-      const arc = arcs[i];
-      const rgb = hexToRgb(arc.color) as { r: number; g: number; b: number };
-      points.push({
-        size: defaultProps.pointSize,
-        order: arc.order,
-        color: (t: number) => `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${1 - t})`,
-        lat: arc.startLat,
-        lng: arc.startLng,
-      });
-      points.push({
-        size: defaultProps.pointSize,
-        order: arc.order,
-        color: (t: number) => `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${1 - t})`,
-        lat: arc.endLat,
-        lng: arc.endLng,
-      });
-    }
-
-    // Remove duplicates for same lat and lng
-    const filteredPoints = points.filter(
-      (v, i, a) =>
-        a.findIndex((v2) =>
-          ["lat", "lng"].every(
-            (k) => v2[k as "lat" | "lng"] === v[k as "lat" | "lng"]
-          )
-        ) === i
-    );
-
-    setGlobeData(filteredPoints);
-  };
-
+ 
   useEffect(() => {
+    const _buildMaterial = () => {
+      if (!globeRef.current) return;
+  
+      const globeMaterial = globeRef.current.globeMaterial() as unknown as {
+        color: Color;
+        emissive: Color;
+        emissiveIntensity: number;
+        shininess: number;
+      };
+      globeMaterial.color = new Color(globeConfig.globeColor);
+      globeMaterial.emissive = new Color(globeConfig.emissive);
+      globeMaterial.emissiveIntensity = globeConfig.emissiveIntensity || 0.1;
+      globeMaterial.shininess = globeConfig.shininess || 0.9;
+    };
+
+
+    const _buildData = () => {
+      const arcs = data;
+      const points = [];
+      for (let i = 0; i < arcs.length; i++) {
+        const arc = arcs[i];
+        const rgb = hexToRgb(arc.color) as { r: number; g: number; b: number };
+        points.push({
+          size: defaultProps.pointSize,
+          order: arc.order,
+          color: (t: number) => `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${1 - t})`,
+          lat: arc.startLat,
+          lng: arc.startLng,
+        });
+        points.push({
+          size: defaultProps.pointSize,
+          order: arc.order,
+          color: (t: number) => `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${1 - t})`,
+          lat: arc.endLat,
+          lng: arc.endLng,
+        });
+      }
+  
+      // Remove duplicates for same lat and lng
+      const filteredPoints = points.filter(
+        (v, i, a) =>
+          a.findIndex((v2) =>
+            ["lat", "lng"].every(
+              (k) => v2[k as "lat" | "lng"] === v[k as "lat" | "lng"]
+            )
+          ) === i
+      );
+  
+      setGlobeData(filteredPoints);
+    };
+  
+
     if (globeRef.current) {
       _buildData();
       _buildMaterial();
     }
-  }, [globeConfig, _buildData, _buildMaterial]);
+  }, [globeConfig, data, defaultProps.pointSize]);
 
   useEffect(() => {
     if (globeRef.current && globeData) {

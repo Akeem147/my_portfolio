@@ -12,7 +12,7 @@ export const CanvasRevealEffect = ({
   containerClassName,
   dotSize,
   showGradient = true,
-  size,
+ 
 }: {
   /**
    * 0.1 - slower
@@ -24,7 +24,7 @@ export const CanvasRevealEffect = ({
   containerClassName?: string;
   dotSize?: number;
   showGradient?: boolean;
-  size?: { width: number; height: number }; 
+ 
 }) => {
   return (
     <div className={cn("h-full relative bg-white w-full", containerClassName)}>
