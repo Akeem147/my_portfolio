@@ -9,7 +9,7 @@ export const BackgroundGradientAnimation = ({
   thirdColor = "100, 220, 255",
   fourthColor = "200, 50, 50",
   fifthColor = "180, 180, 50",
-  interactive = true, 
+  interactive = true,
   pointerColor = "140, 100, 255",
   size = "80%",
   blendingValue = "hard-light",
@@ -38,16 +38,19 @@ export const BackgroundGradientAnimation = ({
   const [curY, setCurY] = useState(0);
   const [tgX, setTgX] = useState(0);
   const [tgY, setTgY] = useState(0);
-  const [isClient, setIsClient] = useState(false); // Track if client-side
+
+  // State to track client-side render
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     // This ensures the code runs only after the component mounts
-    setIsClient(true);
+    setIsClient(true); // Set client-side flag when the component mounts
   }, []);
 
   // Apply gradient values to document body on client-side
   useEffect(() => {
-    if (isClient && typeof window !== "undefined") {
+    if (isClient) {
+      // Manipulate document only after the component is mounted on the client
       document.body.style.setProperty("--gradient-background-start", gradientBackgroundStart);
       document.body.style.setProperty("--gradient-background-end", gradientBackgroundEnd);
       document.body.style.setProperty("--first-color", firstColor);
@@ -70,23 +73,20 @@ export const BackgroundGradientAnimation = ({
     pointerColor,
     size,
     blendingValue,
-    isClient, // Re-run effect when isClient is true
+    isClient, // Only run when client-side
   ]);
 
   useEffect(() => {
     function move() {
-      if (!interactiveRef.current) {
-        return;
-      }
+      if (!interactiveRef.current) return;
+
+      // Update the position for interactive effect
       setCurX(curX + (tgX - curX) / 20);
       setCurY(curY + (tgY - curY) / 20);
       interactiveRef.current.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
     }
 
-    // Only move the mouse follower if interactive is true
-    if (interactive) {
-      move();
-    }
+    if (interactive) move();
   }, [tgX, tgY, curX, curY, interactive]);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -96,11 +96,6 @@ export const BackgroundGradientAnimation = ({
       setTgY(event.clientY - rect.top);
     }
   };
-
-  const [isSafari, setIsSafari] = useState(false);
-  useEffect(() => {
-    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
-  }, []);
 
   return (
     <div
@@ -126,11 +121,9 @@ export const BackgroundGradientAnimation = ({
       <div className={cn("", className)}>{children}</div>
       <div
         className={cn(
-          "gradients-container h-full w-full blur-lg",
-          isSafari ? "blur-2xl" : "[filter:url(#blurMe)_blur(40px)]"
+          "gradients-container h-full w-full blur-lg"
         )}
       >
-        {/* Render gradient effects here */}
         {interactive && (
           <div
             ref={interactiveRef}
