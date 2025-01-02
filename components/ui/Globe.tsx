@@ -17,23 +17,6 @@ extend({ ThreeGlobe });
 const RING_PROPAGATION_SPEED = 3;
 const aspect = 1.2;
 
-interface Arc {
-  color: string;
-  arcAlt: number;
-  order: number;
-  startLat: number;
-  startLng: number;
-  endLat: number;
-  endLng: number;
-}
-
-interface Point {
-  color: string;
-  size: number;
-  order: number;
-  lat: number;
-  lng: number;
-}
 
 type Position = {
   order: number;
