@@ -30,7 +30,7 @@ export const BackgroundGradientAnimation = ({
   blendingValue?: string;
   children?: React.ReactNode;
   className?: string;
-  interactive?: boolean; // Add the interactive prop to control interaction
+  interactive?: boolean;
   containerClassName?: string;
 }) => {
   const interactiveRef = useRef<HTMLDivElement>(null);
@@ -44,14 +44,15 @@ export const BackgroundGradientAnimation = ({
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This ensures the code runs only after the component mounts
-    setIsClient(true); // Set client-side flag when the component mounts
+    // This ensures the code runs only after the component mounts in the browser
+    if (typeof window !== "undefined") {
+      setIsClient(true); // Set client-side flag when the component mounts
+    }
   }, []);
 
-  // Apply gradient values to document body on client-side
+  // Apply gradient values to document body on client-side only
   useEffect(() => {
     if (isClient) {
-      // Manipulate document only after the component is mounted on the client
       document.body.style.setProperty("--gradient-background-start", gradientBackgroundStart);
       document.body.style.setProperty("--gradient-background-end", gradientBackgroundEnd);
       document.body.style.setProperty("--first-color", firstColor);
