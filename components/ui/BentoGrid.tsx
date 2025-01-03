@@ -1,5 +1,5 @@
-"use client";
-import dynamic from "next/dynamic";
+"use client"; // Ensures this component is rendered only on the client side
+
 import { cn } from "@/utils/cn";
 import { useState } from "react";
 import Lottie from "react-lottie";
@@ -7,6 +7,7 @@ import { IoCopyOutline } from "react-icons/io5";
 import Image from "next/image";
 import animationData from "@/data/confetti.json";
 import MagicButton from "./MagicButton";
+import BackgroundGradientAnimation from "@/components/ui/GradientBg"; // Direct import without dynamic
 
 export const BentoGrid = ({
   className,
@@ -27,13 +28,6 @@ export const BentoGrid = ({
     </div>
   );
 };
-
-const BackgroundGradientAnimation = dynamic(
-  () => import("@/components/ui/GradientBg").then((mod) => mod.default), // Access default export explicitly
-  {
-    ssr: false, // Disable SSR for this component
-  }
-);
 
 export const BentoGridItem = ({
   className,
@@ -173,4 +167,4 @@ export const BentoGridItem = ({
   );
 };
 
-export default BackgroundGradientAnimation;
+export default BentoGridItem;

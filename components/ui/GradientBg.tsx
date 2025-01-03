@@ -1,4 +1,4 @@
-"use client"; // ensures that this component is rendered only on the client side
+"use client"; // Ensures this component is rendered only on the client side
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn";
@@ -50,43 +50,6 @@ const BackgroundGradientAnimation = ({
     }
   }, []);
 
-  // This useEffect ensures that we only interact with the DOM after it has mounted on the client
-  useEffect(() => {
-    if (isClient) {
-      if (typeof document !== "undefined") {
-        // Safe to interact with `document` only on the client
-        document.body.style.setProperty(
-          "--gradient-background-start",
-          gradientBackgroundStart
-        );
-        document.body.style.setProperty(
-          "--gradient-background-end",
-          gradientBackgroundEnd
-        );
-        document.body.style.setProperty("--first-color", firstColor);
-        document.body.style.setProperty("--second-color", secondColor);
-        document.body.style.setProperty("--third-color", thirdColor);
-        document.body.style.setProperty("--fourth-color", fourthColor);
-        document.body.style.setProperty("--fifth-color", fifthColor);
-        document.body.style.setProperty("--pointer-color", pointerColor);
-        document.body.style.setProperty("--size", size);
-        document.body.style.setProperty("--blending-value", blendingValue);
-      }
-    }
-  }, [
-    gradientBackgroundStart,
-    gradientBackgroundEnd,
-    firstColor,
-    secondColor,
-    thirdColor,
-    fourthColor,
-    fifthColor,
-    pointerColor,
-    size,
-    blendingValue,
-    isClient, // Added isClient here to ensure this effect runs when isClient changes
-  ]);
-
   // Handle interactive movement based on mouse position
   useEffect(() => {
     function move() {
@@ -94,9 +57,7 @@ const BackgroundGradientAnimation = ({
 
       setCurX(curX + (tgX - curX) / 20);
       setCurY(curY + (tgY - curY) / 20);
-      interactiveRef.current.style.transform = `translate(${Math.round(
-        curX
-      )}px, ${Math.round(curY)}px)`;
+      interactiveRef.current.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
     }
 
     if (interactive) move();
@@ -110,7 +71,22 @@ const BackgroundGradientAnimation = ({
     }
   };
 
-  if (!isClient) return null; // Return nothing during SSR or before client-side mount
+  // Avoid rendering on SSR or before client-side mount
+  if (!isClient) return null;
+
+  // Prepare inline styles for dynamic CSS variables
+  const gradientStyles = {
+    "--gradient-background-start": gradientBackgroundStart,
+    "--gradient-background-end": gradientBackgroundEnd,
+    "--first-color": firstColor,
+    "--second-color": secondColor,
+    "--third-color": thirdColor,
+    "--fourth-color": fourthColor,
+    "--fifth-color": fifthColor,
+    "--pointer-color": pointerColor,
+    "--size": size,
+    "--blending-value": blendingValue,
+  } as React.CSSProperties;
 
   return (
     <div
@@ -118,15 +94,12 @@ const BackgroundGradientAnimation = ({
         "w-full h-full absolute overflow-hidden top-0 left-0 bg-[linear-gradient(40deg,var(--gradient-background-start),var(--gradient-background-end))]",
         containerClassName
       )}
+      style={gradientStyles} // Apply dynamic styles here
     >
       <svg className="hidden">
         <defs>
           <filter id="blurMe">
-            <feGaussianBlur
-              in="SourceGraphic"
-              stdDeviation="10"
-              result="blur"
-            />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
             <feColorMatrix
               in="blur"
               mode="matrix"
@@ -155,4 +128,4 @@ const BackgroundGradientAnimation = ({
   );
 };
 
-export default BackgroundGradientAnimation
+export default BackgroundGradientAnimation;
