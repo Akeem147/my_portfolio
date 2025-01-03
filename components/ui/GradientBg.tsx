@@ -41,24 +41,29 @@ export const BackgroundGradientAnimation = ({
   const [tgY, setTgY] = useState(0);
   const [isClient, setIsClient] = useState(false);
 
+  // Ensure the code runs only on the client
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsClient(true); // Ensure this code runs only on the client
+      setIsClient(true); // Set `isClient` to true once it's running in the browser
     }
   }, []);
 
+  // This useEffect ensures that we only interact with the DOM after it has mounted on the client
   useEffect(() => {
-    if (isClient && typeof document !== "undefined") {
-      document.body.style.setProperty("--gradient-background-start", gradientBackgroundStart);
-      document.body.style.setProperty("--gradient-background-end", gradientBackgroundEnd);
-      document.body.style.setProperty("--first-color", firstColor);
-      document.body.style.setProperty("--second-color", secondColor);
-      document.body.style.setProperty("--third-color", thirdColor);
-      document.body.style.setProperty("--fourth-color", fourthColor);
-      document.body.style.setProperty("--fifth-color", fifthColor);
-      document.body.style.setProperty("--pointer-color", pointerColor);
-      document.body.style.setProperty("--size", size);
-      document.body.style.setProperty("--blending-value", blendingValue);
+    if (isClient) {
+      if (typeof document !== "undefined") {
+        // Safe to interact with `document` only on the client
+        document.body.style.setProperty("--gradient-background-start", gradientBackgroundStart);
+        document.body.style.setProperty("--gradient-background-end", gradientBackgroundEnd);
+        document.body.style.setProperty("--first-color", firstColor);
+        document.body.style.setProperty("--second-color", secondColor);
+        document.body.style.setProperty("--third-color", thirdColor);
+        document.body.style.setProperty("--fourth-color", fourthColor);
+        document.body.style.setProperty("--fifth-color", fifthColor);
+        document.body.style.setProperty("--pointer-color", pointerColor);
+        document.body.style.setProperty("--size", size);
+        document.body.style.setProperty("--blending-value", blendingValue);
+      }
     }
   }, [
     gradientBackgroundStart,
@@ -71,9 +76,10 @@ export const BackgroundGradientAnimation = ({
     pointerColor,
     size,
     blendingValue,
-    isClient, // Only apply these styles client-side
+    isClient, // Added isClient here to ensure this effect runs when isClient changes
   ]);
 
+  // Handle interactive movement based on mouse position
   useEffect(() => {
     function move() {
       if (!interactiveRef.current) return;
