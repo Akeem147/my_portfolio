@@ -1,4 +1,5 @@
-"use client"
+"use client";
+import dynamic from "next/dynamic";
 import { cn } from "@/utils/cn";
 import { useState } from "react";
 import Lottie from "react-lottie";
@@ -6,7 +7,6 @@ import { IoCopyOutline } from "react-icons/io5";
 import Image from "next/image";
 import animationData from "@/data/confetti.json";
 import MagicButton from "./MagicButton";
-import {BackgroundGradientAnimation} from "@/components/ui/GradientBg"; // Normal import
 
 export const BentoGrid = ({
   className,
@@ -28,6 +28,13 @@ export const BentoGrid = ({
   );
 };
 
+const BackgroundGradientAnimation = dynamic(
+  () => import("@/components/ui/GradientBg").then((mod) => mod.default), // Access default export explicitly
+  {
+    ssr: false, // Disable SSR for this component
+  }
+);
+
 export const BentoGridItem = ({
   className,
   title,
@@ -44,8 +51,8 @@ export const BentoGridItem = ({
   img?: string;
   imgClassName?: string;
   titleClassName?: string;
-  width?: string | undefined,
-  height?: string | undefined,
+  width?: string | undefined;
+  height?: string | undefined;
   spareImg?: string;
   id?: number;
 }) => {
@@ -95,10 +102,7 @@ export const BentoGridItem = ({
           )}
         </div>
         <div>
-          {id === 6 && (
-            // Directly use the BackgroundGradientAnimation component
-            <BackgroundGradientAnimation interactive={true} />
-          )}
+          {id === 6 && <BackgroundGradientAnimation interactive={true} />}
           <div
             className={cn(
               titleClassName,
@@ -168,3 +172,5 @@ export const BentoGridItem = ({
     </div>
   );
 };
+
+export default BackgroundGradientAnimation;

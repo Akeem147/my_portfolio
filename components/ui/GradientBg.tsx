@@ -3,22 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn";
 
-export const BackgroundGradientAnimation = ({
-  gradientBackgroundStart = "rgb(108, 0, 162)",
-  gradientBackgroundEnd = "rgb(0, 17, 82)",
-  firstColor = "18, 113, 255",
-  secondColor = "221, 74, 255",
-  thirdColor = "100, 220, 255",
-  fourthColor = "200, 50, 50",
-  fifthColor = "180, 180, 50",
-  interactive = true,
-  pointerColor = "140, 100, 255",
-  size = "80%",
-  blendingValue = "hard-light",
-  children,
-  className,
-  containerClassName,
-}: {
+interface BackgroundGradientAnimationProps {
   gradientBackgroundStart?: string;
   gradientBackgroundEnd?: string;
   firstColor?: string;
@@ -33,7 +18,24 @@ export const BackgroundGradientAnimation = ({
   className?: string;
   interactive?: boolean;
   containerClassName?: string;
-}) => {
+}
+
+const BackgroundGradientAnimation = ({
+  gradientBackgroundStart = "rgb(108, 0, 162)",
+  gradientBackgroundEnd = "rgb(0, 17, 82)",
+  firstColor = "18, 113, 255",
+  secondColor = "221, 74, 255",
+  thirdColor = "100, 220, 255",
+  fourthColor = "200, 50, 50",
+  fifthColor = "180, 180, 50",
+  interactive = true,
+  pointerColor = "140, 100, 255",
+  size = "80%",
+  blendingValue = "hard-light",
+  children,
+  className,
+  containerClassName,
+}: BackgroundGradientAnimationProps) => {
   const interactiveRef = useRef<HTMLDivElement>(null);
   const [curX, setCurX] = useState(0);
   const [curY, setCurY] = useState(0);
@@ -53,8 +55,14 @@ export const BackgroundGradientAnimation = ({
     if (isClient) {
       if (typeof document !== "undefined") {
         // Safe to interact with `document` only on the client
-        document.body.style.setProperty("--gradient-background-start", gradientBackgroundStart);
-        document.body.style.setProperty("--gradient-background-end", gradientBackgroundEnd);
+        document.body.style.setProperty(
+          "--gradient-background-start",
+          gradientBackgroundStart
+        );
+        document.body.style.setProperty(
+          "--gradient-background-end",
+          gradientBackgroundEnd
+        );
         document.body.style.setProperty("--first-color", firstColor);
         document.body.style.setProperty("--second-color", secondColor);
         document.body.style.setProperty("--third-color", thirdColor);
@@ -86,7 +94,9 @@ export const BackgroundGradientAnimation = ({
 
       setCurX(curX + (tgX - curX) / 20);
       setCurY(curY + (tgY - curY) / 20);
-      interactiveRef.current.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
+      interactiveRef.current.style.transform = `translate(${Math.round(
+        curX
+      )}px, ${Math.round(curY)}px)`;
     }
 
     if (interactive) move();
@@ -112,7 +122,11 @@ export const BackgroundGradientAnimation = ({
       <svg className="hidden">
         <defs>
           <filter id="blurMe">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation="10"
+              result="blur"
+            />
             <feColorMatrix
               in="blur"
               mode="matrix"
@@ -140,3 +154,5 @@ export const BackgroundGradientAnimation = ({
     </div>
   );
 };
+
+export default BackgroundGradientAnimation
