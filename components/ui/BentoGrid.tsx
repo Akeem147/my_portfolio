@@ -7,7 +7,8 @@ import { IoCopyOutline } from "react-icons/io5";
 import Image from "next/image";
 import animationData from "@/data/confetti.json";
 import MagicButton from "./MagicButton";
-import BackgroundGradientAnimation from "@/components/ui/GradientBg"; // Direct import without dynamic
+ 
+import dynamic from "next/dynamic";
 
 export const BentoGrid = ({
   className,
@@ -29,7 +30,12 @@ export const BentoGrid = ({
   );
 };
 
-export const BentoGridItem = ({
+const BackgroundGradientAnimation = dynamic(
+  () => import("@/components/ui/GradientBg").then((mod) => mod.default),
+  { ssr: false }
+);
+
+ export const BentoGridItem = ({
   className,
   title,
   description,
@@ -167,4 +173,4 @@ export const BentoGridItem = ({
   );
 };
 
-export default BentoGridItem;
+export default BackgroundGradientAnimation;
