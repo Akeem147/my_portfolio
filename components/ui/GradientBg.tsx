@@ -1,4 +1,5 @@
-"use client"
+"use client"; // ensures that this component is rendered only on the client side
+
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn";
 
@@ -34,25 +35,20 @@ export const BackgroundGradientAnimation = ({
   containerClassName?: string;
 }) => {
   const interactiveRef = useRef<HTMLDivElement>(null);
-
   const [curX, setCurX] = useState(0);
   const [curY, setCurY] = useState(0);
   const [tgX, setTgX] = useState(0);
   const [tgY, setTgY] = useState(0);
-
-  // State to track client-side render
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This ensures the code runs only after the component mounts in the browser
     if (typeof window !== "undefined") {
-      setIsClient(true); // Set client-side flag when the component mounts
+      setIsClient(true); // Ensure this code runs only on the client
     }
   }, []);
 
-  // Apply gradient values to document body on client-side only
   useEffect(() => {
-    if (isClient) {
+    if (isClient && typeof document !== "undefined") {
       document.body.style.setProperty("--gradient-background-start", gradientBackgroundStart);
       document.body.style.setProperty("--gradient-background-end", gradientBackgroundEnd);
       document.body.style.setProperty("--first-color", firstColor);
@@ -75,14 +71,13 @@ export const BackgroundGradientAnimation = ({
     pointerColor,
     size,
     blendingValue,
-    isClient, // Only run when client-side
+    isClient, // Only apply these styles client-side
   ]);
 
   useEffect(() => {
     function move() {
       if (!interactiveRef.current) return;
 
-      // Update the position for interactive effect
       setCurX(curX + (tgX - curX) / 20);
       setCurY(curY + (tgY - curY) / 20);
       interactiveRef.current.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
@@ -98,6 +93,8 @@ export const BackgroundGradientAnimation = ({
       setTgY(event.clientY - rect.top);
     }
   };
+
+  if (!isClient) return null; // Return nothing during SSR or before client-side mount
 
   return (
     <div
@@ -121,11 +118,7 @@ export const BackgroundGradientAnimation = ({
         </defs>
       </svg>
       <div className={cn("", className)}>{children}</div>
-      <div
-        className={cn(
-          "gradients-container h-full w-full blur-lg"
-        )}
-      >
+      <div className={cn("gradients-container h-full w-full blur-lg")}>
         {interactive && (
           <div
             ref={interactiveRef}

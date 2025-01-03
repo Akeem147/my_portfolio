@@ -1,14 +1,12 @@
-"use client";
+"use client"
 import { cn } from "@/utils/cn";
-
-import { BackgroundGradientAnimation } from "./GradientBg";
-
-import Lottie from "react-lottie";
 import { useState } from "react";
-import animationData from "@/data/confetti.json";
-import MagicButton from "./MagicButton";
+import Lottie from "react-lottie";
 import { IoCopyOutline } from "react-icons/io5";
 import Image from "next/image";
+import animationData from "@/data/confetti.json";
+import MagicButton from "./MagicButton";
+import {BackgroundGradientAnimation} from "@/components/ui/GradientBg"; // Normal import
 
 export const BentoGrid = ({
   className,
@@ -20,7 +18,8 @@ export const BentoGrid = ({
   return (
     <div
       className={cn(
-        "grid md:auto-rows-[8rem] grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto mb-6",
+        // change gap-4 to gap-8, change grid-cols-3 to grid-cols-5, remove md:auto-rows-[18rem], add responsive code
+        "grid grid-cols-1 md:grid-cols-6 lg:grid-cols-5 md:grid-row-7 gap-4 lg:gap-8 mx-auto",
         className
       )}
     >
@@ -37,7 +36,6 @@ export const BentoGridItem = ({
   imgClassName,
   titleClassName,
   spareImg,
- 
   id,
 }: {
   className?: string;
@@ -46,8 +44,8 @@ export const BentoGridItem = ({
   img?: string;
   imgClassName?: string;
   titleClassName?: string;
-  width?: string ;
-  height?: string ;
+  width?: string | undefined,
+  height?: string | undefined,
   spareImg?: string;
   id?: number;
 }) => {
@@ -56,6 +54,7 @@ export const BentoGridItem = ({
     navigator.clipboard.writeText("Odedeakeem539@gmail.com");
     setCopied(true);
   };
+
   return (
     <div
       className={cn(
@@ -97,8 +96,8 @@ export const BentoGridItem = ({
         </div>
         <div>
           {id === 6 && (
-           <BackgroundGradientAnimation interactive={true} />
-
+            // Directly use the BackgroundGradientAnimation component
+            <BackgroundGradientAnimation interactive={true} />
           )}
           <div
             className={cn(
