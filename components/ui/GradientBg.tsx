@@ -45,9 +45,9 @@ const BackgroundGradientAnimation = ({
 
   // Ensure the code runs only on the client
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    
       setIsClient(true); // Set `isClient` to true once it's running in the browser
-    }
+    
   }, []);
 
   // Handle interactive movement based on mouse position
